@@ -1,4 +1,4 @@
-# Inventory Policy Simulator
+# Inventory Policy Simulator 
 
 A Streamlit-based application for simulating and analyzing inventory management policies, with a focus on comparing fixed vs. dynamic reorder policies and analyzing seasonal effects on service levels.
 
@@ -9,17 +9,17 @@ This project provides a comprehensive tool for inventory management analysis, fe
 1. **Dynamic vs. Fixed Policy Comparison**: Simulates and compares the performance of dynamic and fixed reorder point policies
 2. **Seasonal Analysis**: Analyzes the impact of seasonal variations on service levels
 3. **Safety Stock Optimization**: Recommends optimal safety stock levels for different seasons
-4. **Interactive UI**: User-friendly interface for parameter adjustment and result visualization
 
-## Features
+## Experiments
+### Experiment 1
 
-- **Policy Comparison**: Compare fixed and dynamic inventory policies
-- **Cost Analysis**: Analyze holding costs, stockout costs, and ordering costs
-- **Statistical Testing**: Perform t-tests and ANOVA analysis
-- **Seasonal Analysis**: Evaluate service levels across different seasons
-- **Safety Stock Recommendations**: Calculate optimal safety stock levels
-- **Interactive Visualizations**: View cost distributions and seasonal trends
-- **Configurable Parameters**: Adjust simulation parameters through a user-friendly interface
+**H₀:** There is no difference in average total cost between the Fixed and Dynamic policies.  
+**H₁:** The Dynamic policy has a lower average total cost than the Fixed policy.
+
+### Experiment 2
+
+**H₀:** A single safety stock level delivers consistent service levels across all seasons.  
+**H₁:** Seasonal variability leads to significant differences in service levels, requiring tailored safety-stock levels.
 
 ## Prerequisites
 
@@ -39,7 +39,7 @@ This project provides a comprehensive tool for inventory management analysis, fe
 1. Clone the repository:
 ```bash
 git clone https://github.com/RahulCvr/2025Spring_projects
-cd inventory-policy-simulator
+cd 2025Spring_projects
 ```
 
 2. Install required packages:
@@ -93,6 +93,7 @@ ui:
 1. Prepare your data:
    - Create a CSV file with the required columns as specified in the config file
    - Ensure your data includes all necessary fields (date, product ID, demand forecast, etc.)
+   - If you'd like to experiment with sample data - utilize the sample datasets provided in the repo
 
 2. Run the application:
 ```bash
@@ -140,4 +141,9 @@ Your CSV file should contain the following columns (names can be configured in c
 - Streamlit for the web application framework
 - Scikit-learn for machine learning capabilities
 - Pandas and NumPy for data manipulation
-- Matplotlib and Seaborn for visualization 
+- Matplotlib and Seaborn for visualization
+
+Literature Review
+- https://www.sciencedirect.com/science/article/abs/pii/S0925527308001217
+- https://arxiv.org/abs/2310.01079
+
