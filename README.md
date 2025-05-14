@@ -38,7 +38,7 @@ This project provides a comprehensive tool for inventory management analysis, fe
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone <[repository-url](https://github.com/RahulCvr/2025Spring_projects)>
 cd inventory-policy-simulator
 ```
 
