@@ -1,0 +1,42 @@
+# Column mappings for the retail store inventory data
+columns:
+  date: "Date"
+  store_id: "Store ID"
+  product_id: "Product ID"
+  demand_forecast: "Demand Forecast"
+  inventory_level: "Inventory Level"
+  units_ordered: "Units Ordered"
+  units_sold: "Units Sold"
+  category: "Category"
+  region: "Region"
+  weather_condition: "Weather Condition"
+  seasonality: "Seasonality"
+  holiday_promotion: "Holiday/Promotion"
+
+# Simulation parameters
+simulation:
+  default_days: 365
+  default_simulations: 300
+  service_level_range:
+    min: 80
+    max: 99
+    default: 95
+  holding_cost_default: 0.05
+  stockout_cost_default: 2.00
+  ordering_cost_default: 50.00
+  reorder_point_range:
+    min: 50
+    max: 300
+    default: 150
+    step: 10
+  fixed_order_quantity_default: 200
+  monthly_safety_stock_default: 20
+  monthly_target_fill_range:
+    min: 0.80
+    max: 0.99
+    default: 0.95
+
+# UI settings
+ui:
+  title: "Inventory Policy Simulator"
+  sidebar_header: "Simulation Settings" 
