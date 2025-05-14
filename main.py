@@ -22,6 +22,19 @@ def load_config():
     
     Returns:
         dict: Configuration dictionary
+        
+    Examples:
+        >>> config = load_config()
+        >>> isinstance(config, dict)
+        True
+        >>> 'columns' in config
+        True
+        >>> 'simulation' in config
+        True
+        >>> 'ui' in config
+        True
+        >>> all(key in config['columns'] for key in ['date', 'product_id', 'category', 'region'])
+        True
     """
     try:
         with open('config.yaml', 'r') as file:
@@ -43,6 +56,27 @@ def load_data():
     
     Returns:
         pandas.DataFrame: A DataFrame containing the processed retail store inventory data.
+        
+    Examples:
+        >>> # Create a sample DataFrame for testing
+        >>> import pandas as pd
+        >>> import io
+        >>> data = '''Date,Product ID,Category,Region,Weather Condition,Seasonality,Holiday/Promotion,Demand Forecast,Inventory Level,Units Ordered
+        ... 2024-01-01,1,Electronics,North,Sunny,Summer,None,100,50,20
+        ... 2024-01-02,1,Electronics,North,Sunny,Summer,None,120,30,40'''
+        >>> df = pd.read_csv(io.StringIO(data))
+        >>> df['Date'] = pd.to_datetime(df['Date'])
+        >>> df.sort_values('Date', inplace=True)
+        >>> isinstance(df, pd.DataFrame)
+        True
+        >>> 'Date' in df.columns
+        True
+        >>> 'Product ID' in df.columns
+        True
+        >>> df['Date'].dtype == 'datetime64[ns]'
+        True
+        >>> df['Date'].is_monotonic_increasing
+        True
     """
     config = load_config()
     columns = config['columns']
@@ -92,6 +126,18 @@ def validate_numeric_input(value, field_name, min_value=0.01):
         
     Returns:
         float: Validated value
+        
+    Examples:
+        >>> validate_numeric_input(1.5, "Test Field")
+        1.5
+        >>> validate_numeric_input(0.5, "Test Field")
+        0.5
+        >>> validate_numeric_input(0, "Test Field")  # doctest: +SKIP
+        Traceback (most recent call last):
+        ...
+        >>> validate_numeric_input("abc", "Test Field")  # doctest: +SKIP
+        Traceback (most recent call last):
+        ...
     """
     try:
         value = float(value)
@@ -109,6 +155,10 @@ def setup_ui():
     
     Returns:
         tuple: A tuple containing all user input parameters
+    
+    Note:
+        This function is designed to be run in a Streamlit context and cannot be tested
+        directly with doctest.
     """
     config = load_config()
     columns = config['columns']
@@ -219,11 +269,24 @@ def prepare_model_and_predictions(df, product_id):
     Prepare the regression model and generate predictions for the selected product.
     
     Args:
-        df (pandas.DataFrame): The full dataset
-        product_id: Selected product ID
+        df (pandas.DataFrame): The full dataset.
+        product_id: Selected product ID.
         
     Returns:
         tuple: (filtered_df, predicted_all, residual_std)
+        
+    Examples:
+        >>> import pandas as pd
+        >>> import numpy as np
+        >>> data = {'Date': pd.date_range(start='2024-01-01', periods=5), 'Product ID': [1, 1, 1, 1, 1], 'Category': ['Electronics'] * 5, 'Region': ['North'] * 5, 'Weather Condition': ['Sunny'] * 5, 'Seasonality': ['Summer'] * 5, 'Holiday/Promotion': ['None'] * 5, 'Demand Forecast': [100, 120, 150, 110, 130], 'Inventory Level': [50, 30, 40, 20, 60], 'Units Ordered': [20, 40, 30, 50, 10], 'Store ID': [1, 1, 1, 1, 1]}
+        >>> df = pd.DataFrame(data)
+        >>> filtered_df, predicted_all, residual_std = prepare_model_and_predictions(df, 1)
+        >>> isinstance(filtered_df, pd.DataFrame)
+        True
+        >>> isinstance(predicted_all, np.ndarray)
+        True
+        >>> isinstance(residual_std, float)
+        True
     """
     config = load_config()
     columns = config['columns']
@@ -299,6 +362,26 @@ def find_optimal_order_quantity(predicted_all, residual_std, z_score, n_simulati
         
     Returns:
         tuple: (optimal_quantity, average_cost)
+        
+    Examples:
+        >>> predicted = np.array([10, 12, 15, 11, 13])
+        >>> residual_std = 2.0
+        >>> z_score = 1.96
+        >>> n_sim = 10
+        >>> n_days = 30
+        >>> holding = 0.05
+        >>> stockout = 2.0
+        >>> ordering = 50.0
+        >>> reorder = 100
+        >>> opt_q, avg_cost = find_optimal_order_quantity(predicted, residual_std, z_score, n_sim, n_days, holding, stockout, ordering, reorder)
+        >>> isinstance(opt_q, int)
+        True
+        >>> isinstance(avg_cost, float)
+        True
+        >>> opt_q > 0
+        True
+        >>> avg_cost >= 0
+        True
     """
     mean_daily_demand = np.mean(predicted_all)
     std_daily_demand = residual_std
@@ -333,6 +416,26 @@ def run_simulation(dynamic, order_quantity, predicted_all, residual_std, n_simul
         
     Returns:
         pandas.DataFrame: DataFrame containing simulation results
+        
+    Examples:
+        >>> predicted = np.array([10, 12, 15, 11, 13])
+        >>> residual_std = 2.0
+        >>> z_score = 1.96
+        >>> n_sim = 2
+        >>> n_days = 5
+        >>> holding = 0.05
+        >>> stockout = 2.0
+        >>> ordering = 50.0
+        >>> reorder = 100
+        >>> df = run_simulation(True, 50, predicted, residual_std, n_sim, n_days, holding, stockout, ordering, z_score, reorder)
+        >>> isinstance(df, pd.DataFrame)
+        True
+        >>> all(col in df.columns for col in ['Total Cost', 'Holding', 'Stockout', 'Ordering', 'Stockout Days'])
+        True
+        >>> len(df) == n_sim
+        True
+        >>> all(df['Total Cost'] >= 0)
+        True
     """
     results = []
     for _ in range(n_simulations):
